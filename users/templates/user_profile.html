@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load static %}
+
+</br></br>
+{% if perms.users.view_profile or user.username == user_object.username %}
+<h3>Account "{{user_object.username}}"</h3></br>
+
+<p>{{user_object.first_name}} {{user_object.last_name}}</p>
+<p>{{user_object.profile.user_function}}</p>
+<p>Registriert am {{user_object.date_joined|date:'d. F Y'}}</p></br>
+
+{% if perms.users.change_profile or user.username == user_object.username %}
+<a class="button" href="{% url 'edit_user' user_object.username %}">Ändern</a>
+{% endif %}
+{% endif %}
+
+</br></br></br>
+
+<h5>Betreute Fahrzeuge</h5>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Farbe</th>
+      <th>Baujahr</th>
+      <th>Kaufdatum</th>
+      <th>Kaufpreis</th>
+      <th>Hinzugefügt von</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for fahrzeug in user_object.profile.fahrzeuge.all %}
+      <tr>
+      <td>
+        {% if perms.users.change_profile or user.username == user_object.username %}
+          <a href="{% url 'uncollect_fahrzeug' fahrzeug.id %}">
+              <img src="{% static 'images/delete.png' %}" />
+        {% endif %}
+      </td>
+      <td> <a href={% url 'home' fahrzeug_name=fahrzeug.id %}>{{fahrzeug.name}}</a></td>
+      <td style="background:{{fahrzeug.farbe}}"></td>
+      <td> {{fahrzeug.baujahr}}</td>
+      <td> {{fahrzeug.kaufdatum}}</td>
+      <td> {{fahrzeug.preis}} €</td>
+      <td> <a href="{% url 'user_profile' fahrzeug.added_by.user.username %}">{{fahrzeug.added_by.user.username}}</a></td>
+      <td>
+        {% if perms.data.change_fahrzeug %}
+        <a href="{% url 'FahrzeugEdit' fahrzeug.id %}">Ändern</a></td>
+        {% endif %}
+      <td>
+        {% if perms.data.delete_fahrzeug %}
+        <a href="{% url 'FahrzeugDelete' fahrzeug.id %}">Löschen</a></td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

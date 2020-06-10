@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+{% block content %}
+
+</br></br>
+{% if perms.users.change_user or user.username == username %}
+<h3>Account "{{ username }}" bearbeiten</h3></br>
+<form method="post" actions="{% url 'edit_user' username=username %}">
+{% csrf_token %}
+{{form}}
+{{profile_form}}
+</br></br><input type="submit" value="Speichern" />
+{% endif %}
+
+{% endblock %}

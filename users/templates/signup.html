@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+{% block content %}
+
+</br></br>
+<h3>Registrieren</h3></br>
+<form method="post" actions="{% url 'signup' %}">
+{% csrf_token %}
+{{form}}
+</br> 
+{{profile_form}}
+</br></br><input type="submit" value="registrieren" />
+
+
+{% endblock %}

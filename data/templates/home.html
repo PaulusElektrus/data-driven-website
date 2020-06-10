@@ -1,0 +1,127 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% load static %}
+
+  <div class="row">
+    <p>
+    {% if user.is_authenticated %}
+      <h5>Hallo, {{user.username}}!</h5>
+      <a class="button" href={% url 'user_profile' user.username %}> Zum Profil</a>
+      <a class="button" href="{% url 'logout' %}">Logout?</a>
+    {% else %}
+      <a class="button" href="{% url 'login' %}">Zum Login</a>
+    {% endif %}
+    </p>
+  </div>
+
+  {% if perms.data.view_fahrzeug %}
+  <div class="row">
+  {% if fahrzeug_name %}
+  {% for header in fahrzeug_header %}
+  <h5>Alle Services von <b>{{header.name}}</b>:</h5>
+  {% endfor %}
+  {% else %}
+      <h5>Alle Fahrzeuge</h5>
+      <p>Anzahl der Fahrzeuge: {{fahrzeug_list|length}}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Betreut?</th>
+            <th>Name</th>
+            <th>Farbe</th>
+            <th>Baujahr</th>
+            <th>Kaufdatum</th>
+            <th>Kaufpreis</th>
+            <th>Hinzugefügt von</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fahrzeug in fahrzeug_list %}
+            <tr>
+            <td>{% if fahrzeug.id in fahrzeug_ids %}
+                  <img src="{% static 'images/check.png' %}" />
+                {% else %}
+              <a href="{% url 'collect_fahrzeug' fahrzeug.id %}">
+                  <img src="{% static 'images/save.png' %}" /></a>
+                {% endif %}
+            </td>
+            <td> <a href={% url 'home' fahrzeug_name=fahrzeug.id %}>{{fahrzeug.name}}</a></td>
+            <td style="background:{{fahrzeug.farbe}}"></td>
+            <td> {{fahrzeug.baujahr}}</td>
+            <td> {{fahrzeug.kaufdatum}}</td>
+            <td> {{fahrzeug.preis}} €</td>
+            <td> <a href="{% url 'user_profile' fahrzeug.added_by.user.username %}">{{fahrzeug.added_by.user.username}}</a></td>
+            <td>
+              {% if perms.data.change_fahrzeug %}
+              <a href="{% url 'FahrzeugEdit' fahrzeug.id %}">Ändern</a></td>
+              {% endif %}
+            <td>
+              {% if perms.data.delete_fahrzeug %}
+              <a href="{% url 'FahrzeugDelete' fahrzeug.id %}">Löschen</a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if perms.data.add_fahrzeug %}
+      <a class="button" href="{% url 'FahrzeugAdd' %}">Hinzufügen</a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if perms.data.view_service %}
+    {% if not fahrzeug_name %}
+    <div class="row"> </br></br>
+      <h5>Alle Serviceleistungen</h5>
+    {% endif %}
+      <p>Anzahl der Serviceleistungen: {{service_list|length}}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Was</th>
+            <th>Wann</th>
+            <th>Art der Leistung</th>
+            <th>Bei Kilometer</th>
+            <th>Kosten</th>
+            <th>Fahrzeug</th>
+            <th>Ausführende Person</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for service in service_list %}
+          <tr>
+          <td> {{service.was}}</td>
+          <td> {{service.wann}}</td>
+          <td> {{service.prio}}</td>
+          <td> {{service.km}}</td>
+          <td> {{service.kostenpunkt}} €</td>
+          <td> {{service.fahrzeug}}</td>
+          <td> <a href="{% url 'user_profile' service.added_by.user.username %}">{{service.added_by.user.username}}</a></td>
+          <td>
+            {% if perms.data.change_service %}
+            <a href="{% url 'ServiceEdit' service.id %}">Ändern</a></td>
+            {% endif %}
+          <td>
+            {% if perms.data.delete_service %}
+            <a href="{% url 'ServiceDelete' service.id %}">Löschen</a></td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if perms.data.add_service %}
+      {% if fahrzeug_name %}
+        <a class="button" href="{% url 'home' %}"><-- Zurück</a>
+      {% endif %}
+      <a class="button" href="{% url 'ServiceAdd' %}">Hinzufügen</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

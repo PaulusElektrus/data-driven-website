@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+</br><h4>{% if fahrzeug_id %}Editieren eines Fahrzeugs:{% elif service_id %}Editieren eines Service:{% else %}Hinzufügen{% endif %}</h4>
+
+<form action="" method="post">
+{% csrf_token %}
+{{form}}
+</br>
+<input class="button" type="submit">
+</form>
+
+{% endblock %}

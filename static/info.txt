@@ -1,0 +1,7 @@
+To load static files {% load static %} on the site
+
+{ % static 'path' %}
+
+when it`s rendered, path will be replaced by full path.
+
+--> In settings.py add Static URL.
